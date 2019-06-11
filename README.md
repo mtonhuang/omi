@@ -1,9 +1,9 @@
-English | [简体中文](./README.CN.md) | [한국어](./README.KR.md)
+English | [简体中文](./README.CN.md) 
 
-<p align="right">Omi <strong>v6.3.0</strong></p>
-<p align="right">Omio <strong>v2.2.1</strong></p>
-<p align="center"><img src="https://tencent.github.io/omi/assets/omi-logo2019.svg" alt="omi" width="300"/></p>
-<h2 align="center">Omi - Next front end framework using web components with omio(IE8+), omip(小程序) and reomi(react) fallback in tiny js.</h2>
+<p align="center"><img src="https://tencent.github.io/omi/assets/omi-logo2019.svg" alt="omi" width="100"/></p>
+<p align="center"><img src="https://tencent.github.io/omi/assets/omi-inside-outside.jpg" alt="omi" width="1000"/></p>
+<h2 align="center">Omi -  Front End Cross-Frameworks Framework</h2>
+<p align="center">Merge Web Components, JSX, HTM, Virtual DOM and Proxy into one framework with tiny size and high performance. Write components once, using in everywhere, such as Omi, React, Vue or Angular.</p>
 
 ## Ecosystem of Omi
 
@@ -12,15 +12,17 @@ English | [简体中文](./README.CN.md) | [한국어](./README.KR.md)
 | **Project**                         | **Description**                           |
 | ------------------------------- | ----------------------------------- |
 | [omi-docs](https://tencent.github.io/omi/site/docs/index.html)| Omi official documents |
-| [omio![](https://raw.githubusercontent.com/dntzhang/cax/master/asset/hot.png) ](https://github.com/Tencent/omi/tree/master/packages/omio)| Omi for old browsers with same api(IE8+ and mobile browsers)|
-| [omis![](https://raw.githubusercontent.com/dntzhang/cax/master/asset/hot.png) ](https://github.com/Tencent/omi/tree/master/packages/omis)| Server-side rendering(support omio only)|
+| [omim![](https://raw.githubusercontent.com/dntzhang/cax/master/asset/hot.png)](https://github.com/Tencent/omi/tree/master/packages/omim)| Cross-Frameworks components, powered by Material Design and Omi.([DOCS & REPL](https://tencent.github.io/omi/packages/omim/docs/build/index.html) && [JOIN US!](https://github.com/Tencent/omi/tree/master/packages/omim#contribution))|
+| [omio![](https://raw.githubusercontent.com/dntzhang/cax/master/asset/hot.png) ](https://github.com/Tencent/omi/tree/master/packages/omio)| Omi for old browsers with same api(IE8+)|
+| [omis](https://github.com/Tencent/omi/tree/master/packages/omis)| Server-side rendering(support omio only)|
 | [omi-router](https://github.com/Tencent/omi/tree/master/packages/omi-router) |Omi official router in 1KB js|
 | [omi-cli](https://github.com/Tencent/omi/tree/master/packages/omi-cli)| Project scaffolding. [→ Base Templates](https://github.com/Tencent/omi/tree/master/packages/omi-cli/template) and [→ Other Templates](https://github.com/omijs) |
 | [omi-devtools](https://github.com/f/omi-devtools)| Browser DevTools extension |
-| [omiu](https://tencent.github.io/omi/packages/omiu/examples/build/index.html)| Omi official UI|
+| [omiu](https://tencent.github.io/omi/packages/omiu/examples/build/index.html)| Simple Omi UI |
 | [omil](https://github.com/Wscats/omil)|Webpack loader for Omi.js components|
+| [omi-snippets](https://github.com/Wscats/omi-snippets) |A beautify VSCode extension for .omi or .eno file, [Install now!](https://marketplace.visualstudio.com/items?itemName=Wscats.omi-snippets)|
 
-#### Mini Program
+#### Mini Program(小程序)
 
 | **Project**                         | **Description**                           |
 | ------------------------------- | ----------------------------------- |
@@ -52,17 +54,17 @@ English | [简体中文](./README.CN.md) | [한국어](./README.KR.md)
 | [omi-native](https://github.com/Tencent/omi/tree/master/packages/omi-native)|Render web components to native|
 |[omi-i18n](https://github.com/i18next/omi-i18n)| Internationalization solution for omi.js using i18next ecosystem |
 | [omi-page](https://github.com/Tencent/omi/tree/master/packages/omi-page) |Tiny client-side router by [page](https://github.com/visionmedia/page.js)|
-| [omi-snippets](https://github.com/Wscats/omi-snippets) |A beautify VSCode extension for .omi or .eno file, [Install now!](https://marketplace.visualstudio.com/items?itemName=Wscats.omi-snippets)|
 
 ## Why Omi?
 
-- One framework. Mobile & desktop & mini program.
+- Cross framework(react, vue, angular) custom elements by omi
+- One framework. Mobile & desktop & mini program
+- [Super fast rendering and updating](https://tencent.github.io/omi/packages/omi/examples/perfs/)
 - Tiny size
 - Supports TypeScript
 - Reactive data-binding
-- Having official UI components - [omiu](https://tencent.github.io/omi/packages/omiu/examples/build/index.html)
+- Having Cross-frameworks UI components - [omim](https://tencent.github.io/omi/packages/omim/docs/build/index.html)
 - Excellent compatibility(IE8+) with [omio](https://github.com/Tencent/omi/tree/master/packages/omio)
-- Supporting both grammars of omi and react with [reomi](https://github.com/Tencent/omi/tree/master/packages/reomi)
 - Real [MVVM](https://github.com/Tencent/omi/blob/master/tutorial/omi-mvvm.md) with [mappingjs](https://github.com/Tencent/omi/tree/master/packages/mappingjs) strong support
 - Enhanced CSS, [rpx unit support](https://github.com/Tencent/omi/releases/tag/v4.0.26) base on **750** screen width
 - Compliance with browser trend and API design
@@ -82,43 +84,12 @@ Compare TodoApp by Omi and React, Omi and React rendering DOM structure:
 
 Omi uses Shadow DOM based style isolation and semantic structure.
 
-### TypeScript Auto Complete
-
-```jsx
-import { h, WeElement, tag, classNames } from 'omi';
-import * as styles from './_index.less';
-
-interface ButtonProps {
-  href?: string,
-  disabled?: boolean,
-  type?: 'default' | 'primary' | 'danger',
-  htmltype?: 'submit' | 'button' | 'reset',
-  onClick?: (e: any) => void
-}
-
-const TAG = 'o-button'
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [TAG]: Omi.Props & ButtonProps
-    }
-  }
-}
-
-@tag(TAG)
-export default class oButton extends WeElement<ButtonProps, {}> {
-...
-...
-...
-```
-
-<img src="./assets/ts.png" alt="omi" width="427"/>
-
 ## Useful Resources
 
 | **Title Name**  | **Other language** | **Related**|
 | ----------------------------------------- | ------------------ |-----------------|
+|[Using Web Components with React in 2019](https://www.grapecity.com/blogs/using-web-components-with-react-2019)|||
+|[Using Web Components in React](https://coryrylan.com/blog/using-web-components-in-react)|||
 |[Styling We Components Using A Shared Style Sheet](https://www.smashingmagazine.com/2016/12/styling-web-components-using-a-shared-style-sheet/)|
 |[Developer Tools support for Web Components in Firefox 63](https://blog.nightly.mozilla.org/2018/09/06/developer-tools-support-for-web-components-in-firefox-63/)||
 |[Develop W3C Web Components with WebAssembly](https://medium.com/coinmonks/develop-w3c-web-components-with-webassembly-d65938284255)||
@@ -149,7 +120,7 @@ export default class oButton extends WeElement<ButtonProps, {}> {
   - [Project Template](#project-template)
   - [Hello Element](#hello-element)
   - [TodoApp](#todoapp)
-  - [Store](#store)
+  - [TypeScript Auto Complete](#typescript-auto-complete)
   - [Lifecycle](#lifecycle)
 - [Debugging](#debugging)
 - [Browsers Support](#browsers-support)
@@ -214,6 +185,8 @@ This page demonstrates using Omi **with no build tooling**,  directly run in the
 
 ### Using store system
 
+Omi Store provides a way to pass data through the component tree without having to pass props down manually at every level, injected from the root component and shared across all subcomponents. It's very simple to use:
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -239,6 +212,7 @@ This page demonstrates using Omi **with no build tooling**,  directly run in the
       }
 
       sub() {
+        ////use this.store in any method of any children components
         this.store.data.count--
       }
 
@@ -256,6 +230,7 @@ This page demonstrates using Omi **with no build tooling**,  directly run in the
           `}
     })
 
+    //Injection through a third parameter
     render(html`<my-counter />`, 'body', {
       data: {
         count: 1
@@ -268,57 +243,23 @@ This page demonstrates using Omi **with no build tooling**,  directly run in the
 </html>
 ```
 
-You can also use `like-button` tag directly in HTML：
+You can also use `my-counter` tag directly in HTML：
 
 ```jsx
 <body>
-  <like-button />
+  <my-counter />
 </body>
 ```
 
 ### Add Omi in 30 Seconds
 
 You can also quickly build omi projects using modern JS code:
-<!-- 
-```js
-import { render, WeElement, tag, observe } from "omi"
 
-@observe
-@tag("my-counter")
+```js
+import { tag, WeElement, render } from 'omi'
+
+@tag('my-counter')
 class MyCounter extends WeElement {
-
-  data = {
-    count: 0
-  }
-
-  sub = () => {
-    this.data.count--
-  }
-
-  add = () => {
-    this.data.count++
-  }
-
-  render() {
-    return (
-      <div>
-        <button onClick={this.sub}>-</button>
-        <span>{this.data.count}</span>
-        <button onClick={this.add}>+</button>
-      </div>
-    )
-  }
-}
-
-render(<my-counter />, "body")
-``` -->
-<!-- 
-You will find that the `MyCounter` class name defined above is never used. So you can also use the following way to avoid Eslint hints: -->
-
-```js
-import { render, WeElement, define } from 'omi'
-
-define('my-counter', class extends WeElement {
   data = {
     count: 1
   }
@@ -347,45 +288,13 @@ define('my-counter', class extends WeElement {
       </div>
     )
   }
-})
+}
 
 render(<my-counter />, 'body')
 ```
 
 [→ counter demo](https://tencent.github.io/omi/packages/omi/examples/counter/)
 
-<!-- You can also be defined as a form of pure functions:
-
-```js
-import { define, render } from 'omi'
-
-define('my-counter', function() {
-  const [count, setCount] = this.use({
-    data: 0,
-    effect: function() {
-      document.title = `The num is ${this.data}.`
-    }
-  })
-
-  this.useCss(`button{ color: red; }`)
-
-  return (
-    <div>
-      <button onClick={() => setCount(count - 1)}>-</button>
-      <span>{count}</span>
-      <button onClick={() => setCount(count + 1)}>+</button>
-    </div>
-  )
-})
-
-render(<my-counter />, 'body')
-```
-
-If you don't need effect, you can use `useData` directly:
-
-```js
-const [count, setCount] = this.useData(0)
-``` -->
 
 ## Getting Started
 
@@ -444,50 +353,7 @@ Add or remove the alias config in package.json to switch omi and omio：
   "omi": "omio"
 }
 ```
-
-Using reomi:
-
-```js
-"alias": {
-  "omi": "reomi",
-  "react": "reomi",
-  "react-dom": "reomi"
-}
-```
     
-<!-- About compiled website URL：
-
-* [build env doc](https://facebook.github.io/create-react-app/docs/adding-custom-environment-variables#referencing-environment-variables-in-the-html)
-* [build problem](https://stackoverflow.com/questions/42686149/create-react-app-build-with-public-url)
-
-Such as in windows:
-
-```json
-"scripts": {
-  "start": "node scripts/start.js",
-  "_build": "node scripts/build.js",
-  "build":"set PUBLIC_URL=https://fe.wxpay.oa.com/dv&& npm run _build"
-}
-```
-
-In mac os:
-
-```json
-"scripts": {
-    "start": "node scripts/start.js",
-    "_build": "node scripts/build.js",
-    "build":"PUBLIC_URL=https://fe.wxpay.oa.com/dv npm run _build",
-    "fix": "eslint src --fix"
-  },
-```
-
-If you only want to use relative addresses:
-
-```
-"build":"set PUBLIC_URL=.&& npm run _build"  //windows
-"build":"PUBLIC_URL=. npm run _build",       //mac os
-``` -->
-
 ### Project Template
 
 | **Template Type**|  **Command**|  **Describe**|
@@ -516,7 +382,12 @@ define('hello-element', class extends WeElement {
     evt.stopPropagation()
   }
 
- static css = `
+  //If you need to use <hello-element></hello-element> directly in html, you must declare propTypes
+  static propTypes = {
+    msg: String
+  }
+
+  static css = `
       div {
         color: red;
         cursor: pointer;
@@ -525,7 +396,7 @@ define('hello-element', class extends WeElement {
   render(props) {
     return (
       <div onClick={this.onClick}>
-        Hello {props.msg} {props.propFromParent}
+        Hello {props.msg}
         <div>Click Me!</div>
       </div>
     )
@@ -540,17 +411,16 @@ import { define, render, WeElement } from 'omi'
 import './hello-element'
 
 define('my-app', class extends WeElement {
-  data = { abc: 'abc', passToChild: 123 }
+  data = { abc: 'abc' }
 
   // define CustomEvent Handler
   onAbc = evt => {
     // get evt data by evt.detail
     this.data.abc = ' by ' + evt.detail.name
-    this.data.passToChild = 1234
     this.update()
   }
 
-  css = `
+  static css = `
       div{
           color: green;
       }`
@@ -559,10 +429,9 @@ define('my-app', class extends WeElement {
   render(props, data) {
     return (
       <div>
-        Hello {props.name} {data.abc}
+        Hello {data.abc}
         <hello-element
           onAbc={this.onAbc}
-          propFromParent={data.passToChild}
           msg="WeElement"
         />
       </div>
@@ -644,14 +513,20 @@ Here is a relatively complete example of TodoApp:
 ```js
 import { define, render, WeElement } from 'omi'
 
-define('todo-list', function(props) {
-  return (
-    <ul>
-      {props.items.map(item => (
-        <li key={item.id}>{item.text}</li>
-      ))}
-    </ul>
-  )
+define('todo-list', class extends WeElement {
+  static propTypes = {
+    items: Array
+  }
+
+  render(props) {
+    return (
+      <ul>
+        {props.items.map(item => (
+          <li key={item.id}>{item.text}</li>
+        ))}
+      </ul>
+    )
+  }
 })
 
 define('todo-app', class extends WeElement {
@@ -696,148 +571,38 @@ define('todo-app', class extends WeElement {
 render(<todo-app />, 'body')
 ```
 
-### Store
+### TypeScript Auto Complete
 
-Omi Store provides a way to pass data through the component tree without having to pass props down manually at every level, injected from the root component and shared across all subcomponents. It's very simple to use:
+```jsx
+import { h, WeElement, tag, classNames } from 'omi';
+import * as styles from './_index.less';
 
-```js
-import { define, render, WeElement } from 'omi'
-
-define('my-hello', class extends WeElement {
-  render() {
-    //use this.store in any method of any children components
-    return <div>{this.store.name}</div>
-  }
-})
-
-define('my-app', class extends WeElement {
-  handleClick = () => {
-     //use this.store in any method of any children components
-    this.store.reverse()
-    this.update()
-  }
-
-  render() {
-    return (
-      <div>
-        <my-hello />
-        <button onclick={this.handleClick}>reverse</button>
-      </div>
-    )
-  }
-})
-
-const store = {
-  name: 'abc',
-  reverse: function() {
-    this.name = this.name.split("").reverse().join("")
-  }
+interface ButtonProps {
+  href?: string,
+  disabled?: boolean,
+  type?: 'default' | 'primary' | 'danger',
+  htmltype?: 'submit' | 'button' | 'reset',
+  onClick?: (e: any) => void
 }
-//Injection through a third parameter
-render(<my-app />, document.body, store)
-```
 
-Unlike global variables, when there are multiple root nodes, multiple stores can be injected, while there is only one global variable.
+const TAG = 'o-button'
 
-<!-- It will automatically update the UI partially when store.data is changed. The powerful **Store architecture** is high-performanced since all the data is mounted on the store.
-
-```js
-export default {
-  data: {
-    items: [],
-    text: "",
-    firstName: "dnt",
-    lastName: "zhang",
-    fullName: function() {
-      return this.firstName + this.lastName;
-    },
-    globalPropTest: "abc", // Change it will refresh all elements without changing the components and page declaring data dependency.
-    ccc: { ddd: 1 } // Change it will refresh all elements without changing the components and page declaring data dependency.
-  },
-  globalData: ["globalPropTest", "ccc.ddd"],
-  add: function() {
-    if (!this.data.text.trim().length) {
-      return;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [TAG]: Omi.Props & ButtonProps
     }
-    this.data.items.push({
-      text: this.data.text,
-      id: Date.now()
-    });
-    this.data.text = "";
-  }
-  // Default value is false, set to true will update all instances when data changing.
-  // updateAll: true
-};
-```
-
-Custom Element requires declaring dependent data so that Omi stores compute the dependency path based on the data declared on the custom component and update it locally as needed. Such as:
-
-```js
-define('todo-app', class extends WeElement {
-  // If you use store, the data is only used to declare dependencies.
-  static get data() {
-    return { items: [], text: "" };
-  }
-  // ...
-  handleChange = e => {
-    this.store.data.text = e.target.value;
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    this.store.add();
-  };
-})
-```
-
-- The logic of data is **encapsulated in the store definition method** (such as `store.add`).
-- Views are only **responsible for passing data to store**, such as calling `store.add` or setting `store.data.text` on top.
-
-You need to inject `store` from the root node at render time to use this store:
-
-```js
-render(<todo-app />, "body", store);
-```
-
-[→ Store Source Code](https://github.com/Tencent/omi/blob/master/packages/omi/examples/store/main.js) -->
-
-
-<!-- 
-## Mitt
-
-If you don't want to use store's data system, you can also use publish subscribe mode. For example, using [mitt](https://github.com/developit/mitt) across component communication in Omi:
-
-* [cross-component-communication](https://github.com/Tencent/omi/blob/master/packages/omi-30-seconds/README.md#cross-component-communication) -->
-
-<!-- 
-If you want to be compatible with IE11, please use the `omi-mobx` instead of omi's own observe.
-
-### Omi Mobx
-
-```js
-import { tag, WeElement } from "omi"
-import { observe } from "omi-mobx"
-
-@observe
-@tag("my-app")
-class MyApp extends WeElement {
-  install() {
-    this.data.name = "omi"
-  }
-
-  onClick = () => {
-    this.data.name = "Omi V4.0"
-  }
-
-  render(props, data) {
-    return (
-      <div onClick={this.onClick}>
-        <h1>Welcome to {data.name}</h1>
-      </div>
-    )
   }
 }
-``` -->
+
+@tag(TAG)
+export default class oButton extends WeElement<ButtonProps, {}> {
+...
+...
+...
+```
+
+<img src="./assets/ts.png" alt="omi" width="427"/>
 
 ### Lifecycle
 
@@ -849,7 +614,7 @@ class MyApp extends WeElement {
 | `beforeUpdate`   | before update                           |
 | `updated`    | after update                             |
 | `beforeRender`   | before `render()`                           |
-| `receiveProps`   | parent element re-render will trigger it      |
+| `receiveProps`   | parent element re-render will trigger it, `return false` will prevent update action|
 
 ## Debugging
 
@@ -858,6 +623,13 @@ Easy to debug via [Omi DevTools Extension](https://github.com/f/omi-devtools) [[
 Since Omi uses Web Components and Shadow-DOM, it doesn't need to have another elements panel such as React has. It just adds a panel to the **Elements' sidebar** and it's powerful as much as React DevTools.
 
 ![Omi DevTools](https://github.com/f/omi-devtools/raw/master/omi-devtools.gif)
+
+### View registered elements
+
+```js
+console.log(Omi.elements)
+```
+
 <!-- 
 ## React to Omi
 
@@ -872,7 +644,7 @@ For example, the below is about migration React button as weui Omi button:
 
 ## Browsers Support
 
-> [Omio](https://github.com/Tencent/omi/tree/master/packages/omio) - Omi for old browsers(IE8+ and mobile browsers)
+> [Omio](https://github.com/Tencent/omi/tree/master/packages/omio) - Omi for old browsers(IE8+)
 
 Omi 4.0+ works in the latest two versions of all major browsers: Safari 10+, IE 11+, and the evergreen Chrome, Firefox, and Edge.
 
@@ -889,7 +661,10 @@ Omi 4.0+ works in the latest two versions of all major browsers: Safari 10+, IE 
 <table><tbody>
       <tr><td><a target="_blank" href="https://github.com/dntzhang"><img width="60px" src="https://avatars2.githubusercontent.com/u/7917954?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/LeeHyungGeun"><img width="60px" src="https://avatars2.githubusercontent.com/u/2471651?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/xcatliu"><img width="60px" src="https://avatars1.githubusercontent.com/u/5453359?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/1921622004"><img width="60px" src="https://avatars1.githubusercontent.com/u/19359217?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/yanceyou"><img width="60px" src="https://avatars2.githubusercontent.com/u/16320418?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/f"><img width="60px" src="https://avatars0.githubusercontent.com/u/196477?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/pasturn"><img width="60px" src="https://avatars0.githubusercontent.com/u/6126885?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/132yse"><img width="60px" src="https://avatars3.githubusercontent.com/u/12951461?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/akira-cn"><img width="60px" src="https://avatars0.githubusercontent.com/u/316498?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/ZainChen"><img width="60px" src="https://avatars3.githubusercontent.com/u/15615524?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/dangxuandev"><img width="60px" src="https://avatars1.githubusercontent.com/u/5436704?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/daizhan"><img width="60px" src="https://avatars0.githubusercontent.com/u/5318547?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/validalias"><img width="60px" src="https://avatars1.githubusercontent.com/u/44221844?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/elfman"><img width="60px" src="https://avatars3.githubusercontent.com/u/948001?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/NoBey"><img width="60px" src="https://avatars3.githubusercontent.com/u/10740524?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/hilkbahar"><img width="60px" src="https://avatars2.githubusercontent.com/u/12161006?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/eyea"><img width="60px" src="https://avatars0.githubusercontent.com/u/17020223?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/guisturdy"><img width="60px" src="https://avatars1.githubusercontent.com/u/7098619?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/KidneyFlower"><img width="60px" src="https://avatars1.githubusercontent.com/u/16027183?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/zhangsanshi"><img width="60px" src="https://avatars1.githubusercontent.com/u/3771933?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/xland"><img width="60px" src="https://avatars0.githubusercontent.com/u/2980915?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/winstonxie"><img width="60px" src="https://avatars3.githubusercontent.com/u/16422642?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/ghostzhang"><img width="60px" src="https://avatars3.githubusercontent.com/u/194242?s=60&amp;v=4"></a></td>
       <td><a target="_blank" href="https://github.com/jayZOU"><img width="60px" src="https://avatars3.githubusercontent.com/u/8576977?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/zhengbao"><img width="60px" src="https://avatars3.githubusercontent.com/u/1736166?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/vorshen"><img width="60px" src="https://avatars3.githubusercontent.com/u/10334783?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/akira-cn"><img width="60px" src="https://avatars3.githubusercontent.com/u/316498?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/loo41"><img width="60px" src="https://avatars3.githubusercontent.com/u/28095677?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/rainmanhhh"><img width="60px" src="https://avatars3.githubusercontent.com/u/13862623?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/nbompetsis"><img width="60px" src="https://avatars3.githubusercontent.com/u/11991105?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/CodeFalling"><img width="60px" src="https://avatars1.githubusercontent.com/u/5436704?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/daizhan"><img width="60px" src="https://avatars0.githubusercontent.com/u/5318547?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/ritschwumm"><img width="60px" src="https://avatars2.githubusercontent.com/u/547138?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/kahwee"><img width="60px" src="https://avatars3.githubusercontent.com/u/262105?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/alanyinjs"><img width="60px" src="https://avatars3.githubusercontent.com/u/25688258?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/electerious"><img width="60px" src="https://avatars2.githubusercontent.com/u/499088?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/nanhupatar"><img width="60px" src="https://avatars1.githubusercontent.com/u/27266016?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/ilker0"><img width="60px" src="https://avatars1.githubusercontent.com/u/23511412?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/MrGrabazu"><img width="60px" src="https://avatars2.githubusercontent.com/u/6928672?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/Tagir-A"><img width="60px" src="https://avatars2.githubusercontent.com/u/23556586?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/mahmut-gundogdu"><img width="60px" src="https://avatars2.githubusercontent.com/u/2217899?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/howel52"><img width="60px" src="https://avatars3.githubusercontent.com/u/9854818?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/yolio2003"><img width="60px" src="https://avatars1.githubusercontent.com/u/352931?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/loo41"><img width="60px" src="https://avatars3.githubusercontent.com/u/28095677?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/nbompetsis"><img width="60px" src="https://avatars1.githubusercontent.com/u/11991105?s=60&amp;v=4"></a></td></tr><tr><td><a target="_blank" href="https://github.com/WozHuang"><img width="60px" src="https://avatars2.githubusercontent.com/u/22727100?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/web-padawan"><img width="60px" src="https://avatars2.githubusercontent.com/u/10589913?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/SuperHuangXu"><img width="60px" src="https://avatars1.githubusercontent.com/u/14816052?s=60&amp;v=4"></a></td><td><a target="_blank" href="https://github.com/LastHeaven"><img width="60px" src="https://avatars1.githubusercontent.com/u/10590077?s=60&amp;v=4"></a></td>
-      <td><a target="_blank" href="https://github.com/Wscats"><img width="60px" src="https://avatars3.githubusercontent.com/u/17243165?s=60&amp;v=4"></a></td></tr></tbody></table>
+      <td><a target="_blank" href="https://github.com/Wscats"><img width="60px" src="https://avatars3.githubusercontent.com/u/17243165?s=60&amp;v=4"></a></td></tr><tr>
+      <td><a target="_blank" href="https://github.com/FAKER-A"><img width="60px" src="https://avatars2.githubusercontent.com/u/25676164?s=60&amp;v=4"></a></td>
+       <td><a target="_blank" href="https://github.com/liulinboyi"><img width="60px" src="https://avatars2.githubusercontent.com/u/41336612?s=60&amp;v=4"></a></td>
+        <td><a target="_blank" href="https://github.com/hulei"><img width="60px" src="https://avatars2.githubusercontent.com/u/6905072?s=60&amp;v=4"></a></td> <td><a target="_blank" href="https://github.com/mtonhuang"><img width="60px" src="https://avatars2.githubusercontent.com/u/30364922?s=60&amp;v=4"></a></td></tr></tbody></table>
 
 ## Maintainers
 

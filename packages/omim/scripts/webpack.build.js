@@ -19,7 +19,8 @@ const config = {
     path: path.resolve(__dirname, '../src/' + name),
     filename: 'index.js',
     libraryTarget: 'umd',
-    library: library
+    library: library,
+    libraryExport: "default" 
   },
   mode: 'development',
   module: {
@@ -28,6 +29,9 @@ const config = {
       use: [
         'to-string-loader',
         'css-loader',
+        {
+          loader: 'resolve-url-loader'
+        },
         {
           loader: 'sass-loader',
           options: {
@@ -42,6 +46,10 @@ const config = {
           }
         }
       ]
+    },
+    {
+      test: /\.(jpe?g|png|gif|svg)$/i, 
+      loader: "url-loader"
     },
     {
       test: /\.[t|j]sx?$/,
@@ -60,14 +68,14 @@ const config = {
   }
 }
 
-if (name !== 'icon') {
-  config.externals['../icon'] = {
-    commonjs: "@omim/icon",
-    commonjs2: "@omim/icon",
-    amd: "@omim/icon",
-    root: "MIcon"
-  }
-}
+// if (name !== 'icon') {
+//   config.externals['../icon'] = {
+//     commonjs: "@omim/icon",
+//     commonjs2: "@omim/icon",
+//     amd: "@omim/icon",
+//     root: "MIcon"
+//   }
+// }
 webpack(config, (err, stats) => { // Stats Object
   if (err || stats.hasErrors()) {
     // Handle errors here

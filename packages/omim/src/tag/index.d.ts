@@ -1,10 +1,12 @@
 import { WeElement } from 'omi';
 import '../icon';
+import '../theme.ts';
 interface Props {
     type: string;
     active: boolean;
     size: string;
-    icon: object;
+    icon: string;
+    svgIcon: object;
 }
 interface Data {
 }
@@ -14,7 +16,8 @@ export default class Tag extends WeElement<Props, Data> {
         type: StringConstructor;
         active: BooleanConstructor;
         size: StringConstructor;
-        icon: ObjectConstructor;
+        icon: StringConstructor;
+        svgIcon: ObjectConstructor;
     };
     render(props: any): JSX.Element;
 }

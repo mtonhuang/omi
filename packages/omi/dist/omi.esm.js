@@ -1,5 +1,5 @@
 /**
- * omi v6.3.2  http://omijs.org
+ * omi v6.6.2  http://omijs.org
  * Omi === Preact + Scoped CSS + Store System + Native Support in 3kb javascript.
  * By dntzhang https://github.com/dntzhang
  * Github: https://github.com/Tencent/omi
@@ -313,7 +313,8 @@ function setAccessor(node, name, old, value, isSvg) {
       }
     }
 (node._listeners || (node._listeners = {}))[name] = value;
-  } else if (name !== 'list' && name !== 'type' && !isSvg && name in node) {
+  } else if (name !== 'list' && name !== 'type' && name !== 'css' && !isSvg && name in node && value !== '') {
+    //value !== '' fix for selected, disabled, checked with pure element
     // Attempt to set a DOM property to the given value.
     // IE & FF throw for certain property-value combinations.
     try {
@@ -384,30 +385,34 @@ function diff(dom, vnode, context, mountAll, parent, componentRoot) {
     hydrating = dom != null && !('__omiattr_' in dom);
   }
   if (isArray(vnode)) {
-    ret = [];
-    var parentNode = null;
-    if (isArray(dom)) {
-      var domLength = dom.length;
-      var vnodeLength = vnode.length;
-      var maxLength = domLength >= vnodeLength ? domLength : vnodeLength;
-      parentNode = dom[0].parentNode;
-      for (var i = 0; i < maxLength; i++) {
-        var ele = idiff(dom[i], vnode[i], context, mountAll, componentRoot);
-        ret.push(ele);
-        if (i > domLength - 1) {
-          parentNode.appendChild(ele);
-        }
+    if (parent) {
+      var styles = parent.querySelectorAll('style');
+      styles.forEach(function (s) {
+        parent.removeChild(s);
+      });
+      innerDiffNode(parent, vnode);
+
+      for (var i = styles.length - 1; i >= 0; i--) {
+        parent.firstChild ? parent.insertBefore(styles[i], parent.firstChild) : parent.appendChild(style[i]);
       }
     } else {
-      vnode.forEach(function (item) {
-        var ele = idiff(dom, item, context, mountAll, componentRoot);
+
+      ret = [];
+      vnode.forEach(function (item, index) {
+        var ele = idiff(index === 0 ? dom : null, item, context, mountAll, componentRoot);
         ret.push(ele);
         parent && parent.appendChild(ele);
       });
     }
   } else {
     if (isArray(dom)) {
-      ret = idiff(dom[0], vnode, context, mountAll, componentRoot);
+      dom.forEach(function (one, index) {
+        if (index === 0) {
+          ret = idiff(one, vnode, context, mountAll, componentRoot);
+        } else {
+          recollectNodeTree(one, false);
+        }
+      });
     } else {
       ret = idiff(dom, vnode, context, mountAll, componentRoot);
     }
@@ -513,7 +518,7 @@ function idiff(dom, vnode, context, mountAll, componentRoot) {
     }
 
   // Apply attributes/props from VNode to the DOM Element:
-  diffAttributes(out, vnode.attributes, props, vnode.children);
+  diffAttributes(out, vnode.attributes, props);
   if (out.props) {
     out.props.children = vnode.children;
   }
@@ -656,7 +661,7 @@ function removeChildren(node) {
  *	@param {Object} attrs		The desired end-state key-value attribute pairs
  *	@param {Object} old			Current/previous attributes (from previous VNode or element's prop cache)
  */
-function diffAttributes(dom, attrs, old, children) {
+function diffAttributes(dom, attrs, old) {
   var name;
   var update = false;
   var isWeElement = dom.update;
@@ -700,9 +705,11 @@ function diffAttributes(dom, attrs, old, children) {
   }
 
   if (isWeElement && dom.parentNode) {
-    if (update || children.length > 0 || dom.store) {
-      dom.receiveProps(dom.props, dom.data, oldClone);
-      dom.update();
+    //__hasChildren is not accuracy when it was empty at first, so add dom.children.length > 0 condition
+    if (update || dom.__hasChildren || dom.children.length > 0 || dom.store && !dom.store.data) {
+      if (dom.receiveProps(dom.props, dom.data, oldClone) !== false) {
+        dom.update();
+      }
     }
   }
 }
@@ -1119,6 +1126,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function define(name, ctor) {
   if (ctor.is === 'WeElement') {
+    if (options.mapping[name]) {
+      // if(options.mapping[name] === ctor){
+      //   console.warn(`You redefine custom elements named [${name}], redundant JS files may be referenced.`)
+      // } else {
+      //   console.warn(`This custom elements name [${name}] has already been used, please rename it.`)
+      // }
+      return;
+    }
     customElements.define(name, ctor);
     options.mapping[name] = ctor;
     if (ctor.use) {
@@ -1308,9 +1323,11 @@ var WeElement = function (_HTMLElement) {
     } else {
       this.constructor.use && (this.use = getUse(this.store.data, this.constructor.use));
     }
+    this.attrsToProps();
     this.beforeInstall();
-    !this._isInstalled && this.install();
+    this.install();
     this.afterInstall();
+
     var shadowRoot;
     if (!this.shadowRoot) {
       shadowRoot = this.attachShadow({
@@ -1323,20 +1340,24 @@ var WeElement = function (_HTMLElement) {
         shadowRoot.removeChild(fc);
       }
     }
+
     if (this.constructor.css) {
       shadowRoot.appendChild(cssToDom(this.constructor.css));
     } else if (this.css) {
       shadowRoot.appendChild(cssToDom(typeof this.css === 'function' ? this.css() : this.css));
     }
-    !this._isInstalled && this.beforeRender();
+    this.beforeRender();
     options.afterInstall && options.afterInstall(this);
     if (this.constructor.observe) {
       this.beforeObserve();
       proxyUpdate(this);
       this.observed();
     }
-    this.attrsToProps();
-    this._host = diff(null, this.render(this.props, this.data, this.store), {}, false, null, false);
+
+    var rendered = this.render(this.props, this.data, this.store);
+    this.__hasChildren = Object.prototype.toString.call(rendered) === '[object Array]' && rendered.length > 0;
+
+    this._host = diff(null, rendered, {}, false, null, false);
     this.rendered();
 
     if (this.props.css) {
@@ -1352,7 +1373,7 @@ var WeElement = function (_HTMLElement) {
     } else {
       shadowRoot.appendChild(this._host);
     }
-    !this._isInstalled && this.installed();
+    this.installed();
     this._isInstalled = true;
   };
 
@@ -1373,24 +1394,35 @@ var WeElement = function (_HTMLElement) {
     this._willUpdate = true;
     this.beforeUpdate();
     this.beforeRender();
-    if (this._customStyleContent !== this.props.css) {
+    //fix null !== undefined
+    if (this._customStyleContent != this.props.css) {
       this._customStyleContent = this.props.css;
       this._customStyleElement.textContent = this._customStyleContent;
     }
     this.attrsToProps();
-    this._host = diff(this._host, this.render(this.props, this.data, this.store), null, null, this.shadowRoot);
+
+    var rendered = this.render(this.props, this.data, this.store);
+    this.__hasChildren = this.__hasChildren || Object.prototype.toString.call(rendered) === '[object Array]' && rendered.length > 0;
+
+    this._host = diff(this._host, rendered, null, null, this.shadowRoot);
     this._willUpdate = false;
     this.updated();
   };
 
   WeElement.prototype.removeAttribute = function removeAttribute(key) {
     _HTMLElement.prototype.removeAttribute.call(this, key);
-    this.update();
+    //Avoid executing removeAttribute methods before connectedCallback
+    this._isInstalled && this.update();
   };
 
   WeElement.prototype.setAttribute = function setAttribute(key, val) {
-    _HTMLElement.prototype.setAttribute.call(this, key, val);
-    this.update();
+    if (val && typeof val === 'object') {
+      _HTMLElement.prototype.setAttribute.call(this, key, JSON.stringify(val));
+    } else {
+      _HTMLElement.prototype.setAttribute.call(this, key, val);
+    }
+    //Avoid executing setAttribute methods before connectedCallback
+    this._isInstalled && this.update();
   };
 
   WeElement.prototype.pureRemoveAttribute = function pureRemoveAttribute(key) {
@@ -1419,18 +1451,29 @@ var WeElement = function (_HTMLElement) {
             ele.props[key] = Number(val);
             break;
           case Boolean:
-            ele.props[key] = true;
+            if (val === 'false' || val === '0') {
+              ele.props[key] = false;
+            } else {
+              ele.props[key] = true;
+            }
             break;
+          case Array:
           case Object:
-            ele.props[key] = JSON.parse(val.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:([^\/])/g, '"$2":$4').replace(/'([\s\S]*?)'/g, '"$1"'));
+            ele.props[key] = JSON.parse(val.replace(/(['"])?([a-zA-Z0-9_-]+)(['"])?:([^\/])/g, '"$2":$4').replace(/'([\s\S]*?)'/g, '"$1"').replace(/,(\s*})/g, '$1'));
             break;
+        }
+      } else {
+        if (ele.constructor.defaultProps && ele.constructor.defaultProps.hasOwnProperty(key)) {
+          ele.props[key] = ele.constructor.defaultProps[key];
+        } else {
+          ele.props[key] = null;
         }
       }
     });
   };
 
   WeElement.prototype.fire = function fire(name, data) {
-    this.dispatchEvent(new CustomEvent(name.toLowerCase(), { detail: data }));
+    this.dispatchEvent(new CustomEvent(name.replace(/-/g, '').toLowerCase(), { detail: data }));
   };
 
   WeElement.prototype.beforeInstall = function beforeInstall() {};
@@ -1721,6 +1764,10 @@ function extractClass() {
   }
 }
 
+function o(obj) {
+  return JSON.stringify(obj);
+}
+
 var n=function(t,r,u,e){for(var p=1;p<r.length;p++){var s=r[p++],a="number"==typeof s?u[s]:s;1===r[p]?e[0]=a:2===r[p]?(e[1]=e[1]||{})[r[++p]]=a:3===r[p]?e[1]=Object.assign(e[1]||{},a):e.push(r[p]?t.apply(null,n(t,a,u,["",null])):a);}return e},t=function(n){for(var t,r,u=1,e="",p="",s=[0],a=function(n){1===u&&(n||(e=e.replace(/^\s*\n\s*|\s*\n\s*$/g,"")))?s.push(n||e,0):3===u&&(n||e)?(s.push(n||e,1), u=2):2===u&&"..."===e&&n?s.push(n,3):2===u&&e&&!n?s.push(!0,2,e):4===u&&r&&(s.push(n||e,2,r), r=""), e="";},f=0;f<n.length;f++){f&&(1===u&&a(), a(f));for(var h=0;h<n[f].length;h++)t=n[f][h], 1===u?"<"===t?(a(), s=[s], u=3):e+=t:p?t===p?p="":e+=t:'"'===t||"'"===t?p=t:">"===t?(a(), u=1):u&&("="===t?(u=4, r=e, e=""):"/"===t?(a(), 3===u&&(s=s[0]), u=s, (s=s[0]).push(u,4), u=0):" "===t||"\t"===t||"\n"===t||"\r"===t?(a(), u=2):e+=t);}return a(), s},r="function"==typeof Map,u=r?new Map:{},e=r?function(n){var r=u.get(n);return r||u.set(n,r=t(n)), r}:function(n){for(var r="",e=0;e<n.length;e++)r+=n[e].length+"-"+n[e];return u[r]||(u[r]=t(n))};function htm(t){var r=n(this,e(t),arguments,[]);return r.length>1?r:r[0]}
 
 var html = htm.bind(h);
@@ -1731,6 +1778,7 @@ function createRef() {
 
 var Component = WeElement;
 var defineElement = define;
+var elements = options.mapping;
 
 var omi = {
   tag: tag,
@@ -1753,13 +1801,15 @@ var omi = {
   extractClass: extractClass,
   createRef: createRef,
   html: html,
-  htm: htm
+  htm: htm,
+  o: o,
+  elements: elements
 };
 
 options.root.Omi = omi;
 options.root.omi = omi;
-options.root.Omi.version = '6.3.2';
+options.root.Omi.version = '6.6.2';
 
 export default omi;
-export { tag, WeElement, Component, render, h, h as createElement, options, define, observe, cloneElement, getHost, rpx, tick, nextTick, ModelView, defineElement, classNames, extractClass, createRef, html, htm };
+export { tag, WeElement, Component, render, h, h as createElement, options, define, observe, cloneElement, getHost, rpx, tick, nextTick, ModelView, defineElement, classNames, extractClass, createRef, html, htm, o, elements };
 //# sourceMappingURL=omi.esm.js.map

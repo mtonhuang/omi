@@ -133,7 +133,7 @@
                 }
             }
             (node.__l || (node.__l = {}))[name] = value;
-        } else if ('list' !== name && 'type' !== name && !isSvg && name in node) {
+        } else if ('list' !== name && 'type' !== name && 'css' !== name && !isSvg && name in node && '' !== value) {
             try {
                 node[name] = null == value ? '' : value;
             } catch (e) {}
@@ -162,26 +162,24 @@
             isSvgMode = null != parent && void 0 !== parent.ownerSVGElement;
             hydrating = null != dom && !('__omiattr_' in dom);
         }
-        if (isArray(vnode)) {
+        if (isArray(vnode)) if (parent) {
+            var styles = parent.querySelectorAll('style');
+            styles.forEach(function(s) {
+                parent.removeChild(s);
+            });
+            innerDiffNode(parent, vnode);
+            for (var i = styles.length - 1; i >= 0; i--) parent.firstChild ? parent.insertBefore(styles[i], parent.firstChild) : parent.appendChild(style[i]);
+        } else {
             ret = [];
-            var parentNode = null;
-            if (isArray(dom)) {
-                var domLength = dom.length;
-                var vnodeLength = vnode.length;
-                var maxLength = domLength >= vnodeLength ? domLength : vnodeLength;
-                parentNode = dom[0].parentNode;
-                for (var i = 0; i < maxLength; i++) {
-                    var ele = idiff(dom[i], vnode[i], context, mountAll, componentRoot);
-                    ret.push(ele);
-                    if (i > domLength - 1) parentNode.appendChild(ele);
-                }
-            } else vnode.forEach(function(item) {
-                var ele = idiff(dom, item, context, mountAll, componentRoot);
+            vnode.forEach(function(item, index) {
+                var ele = idiff(0 === index ? dom : null, item, context, mountAll, componentRoot);
                 ret.push(ele);
                 parent && parent.appendChild(ele);
             });
         } else {
-            if (isArray(dom)) ret = idiff(dom[0], vnode, context, mountAll, componentRoot); else ret = idiff(dom, vnode, context, mountAll, componentRoot);
+            if (isArray(dom)) dom.forEach(function(one, index) {
+                if (0 === index) ret = idiff(one, vnode, context, mountAll, componentRoot); else recollectNodeTree(one, !1);
+            }); else ret = idiff(dom, vnode, context, mountAll, componentRoot);
             if (parent && ret.parentNode !== parent) parent.appendChild(ret);
         }
         if (!--diffLevel) hydrating = !1;
@@ -228,7 +226,7 @@
         if (!hydrating && vchildren && 1 === vchildren.length && 'string' == typeof vchildren[0] && null != fc && void 0 !== fc.splitText && null == fc.nextSibling) {
             if (fc.nodeValue != vchildren[0]) fc.nodeValue = vchildren[0];
         } else if (vchildren && vchildren.length || null != fc) if ('WeElement' != out.constructor.is || !out.constructor.noSlot) innerDiffNode(out, vchildren, context, mountAll, hydrating || null != props.dangerouslySetInnerHTML);
-        diffAttributes(out, vnode.attributes, props, vnode.children);
+        diffAttributes(out, vnode.attributes, props);
         if (out.props) out.props.children = vnode.children;
         isSvgMode = prevSvgMode;
         return out;
@@ -279,7 +277,7 @@
             node = next;
         }
     }
-    function diffAttributes(dom, attrs, old, children) {
+    function diffAttributes(dom, attrs, old) {
         var name;
         var update = !1;
         var isWeElement = dom.update;
@@ -308,10 +306,7 @@
                 update = !0;
             }
         }
-        if (isWeElement && dom.parentNode) if (update || children.length > 0 || dom.store) {
-            dom.receiveProps(dom.props, dom.data, oldClone);
-            dom.update();
-        }
+        if (isWeElement && dom.parentNode) if (update || dom.P || dom.children.length > 0 || dom.store && !dom.store.data) if (!1 !== dom.receiveProps(dom.props, dom.data, oldClone)) dom.update();
     }
     function tick(fn, scope) {
         callbacks.push({
@@ -373,6 +368,7 @@
     }
     function define(name, ctor) {
         if ('WeElement' === ctor.is) {
+            if (options.mapping[name]) return;
             customElements.define(name, ctor);
             options.mapping[name] = ctor;
             if (ctor.use) ctor.updatePath = getPath(ctor.use); else if (ctor.data) ctor.updatePath = getUpdatePath(ctor.data);
@@ -641,6 +637,9 @@
             class: classNames.apply(null, args)
         };
     }
+    function o(obj) {
+        return JSON.stringify(obj);
+    }
     function htm(t) {
         var r = n(this, e(t), arguments, []);
         return r.length > 1 ? r : r[0];
@@ -896,8 +895,9 @@
                 this.M = getPath(use);
                 this.use = getUse(this.store.data, use);
             } else this.constructor.use && (this.use = getUse(this.store.data, this.constructor.use));
+            this.attrsToProps();
             this.beforeInstall();
-            !this.B && this.install();
+            this.install();
             this.afterInstall();
             var shadowRoot;
             if (!this.shadowRoot) shadowRoot = this.attachShadow({
@@ -908,15 +908,16 @@
                 while (fc = shadowRoot.firstChild) shadowRoot.removeChild(fc);
             }
             if (this.constructor.css) shadowRoot.appendChild(cssToDom(this.constructor.css)); else if (this.css) shadowRoot.appendChild(cssToDom('function' == typeof this.css ? this.css() : this.css));
-            !this.B && this.beforeRender();
+            this.beforeRender();
             options.afterInstall && options.afterInstall(this);
             if (this.constructor.observe) {
                 this.beforeObserve();
                 proxyUpdate(this);
                 this.observed();
             }
-            this.attrsToProps();
-            this.L = diff(null, this.render(this.props, this.data, this.store), {}, !1, null, !1);
+            var rendered = this.render(this.props, this.data, this.store);
+            this.P = '[object Array]' === Object.prototype.toString.call(rendered) && rendered.length > 0;
+            this.L = diff(null, rendered, {}, !1, null, !1);
             this.rendered();
             if (this.props.css) {
                 this.N = cssToDom(this.props.css);
@@ -926,7 +927,7 @@
             if (isArray(this.L)) this.L.forEach(function(item) {
                 shadowRoot.appendChild(item);
             }); else shadowRoot.appendChild(this.L);
-            !this.B && this.installed();
+            this.installed();
             this.B = !0;
         };
         WeElement.prototype.disconnectedCallback = function() {
@@ -941,22 +942,24 @@
             this.J = !0;
             this.beforeUpdate();
             this.beforeRender();
-            if (this.O !== this.props.css) {
+            if (this.O != this.props.css) {
                 this.O = this.props.css;
                 this.N.textContent = this.O;
             }
             this.attrsToProps();
-            this.L = diff(this.L, this.render(this.props, this.data, this.store), null, null, this.shadowRoot);
+            var rendered = this.render(this.props, this.data, this.store);
+            this.P = this.P || '[object Array]' === Object.prototype.toString.call(rendered) && rendered.length > 0;
+            this.L = diff(this.L, rendered, null, null, this.shadowRoot);
             this.J = !1;
             this.updated();
         };
         WeElement.prototype.removeAttribute = function(key) {
             _HTMLElement.prototype.removeAttribute.call(this, key);
-            this.update();
+            this.B && this.update();
         };
         WeElement.prototype.setAttribute = function(key, val) {
-            _HTMLElement.prototype.setAttribute.call(this, key, val);
-            this.update();
+            if (val && 'object' == typeof val) _HTMLElement.prototype.setAttribute.call(this, key, JSON.stringify(val)); else _HTMLElement.prototype.setAttribute.call(this, key, val);
+            this.B && this.update();
         };
         WeElement.prototype.pureRemoveAttribute = function(key) {
             _HTMLElement.prototype.removeAttribute.call(this, key);
@@ -982,17 +985,18 @@
                         break;
 
                       case Boolean:
-                        ele.props[key] = !0;
+                        if ('false' === val || '0' === val) ele.props[key] = !1; else ele.props[key] = !0;
                         break;
 
+                      case Array:
                       case Object:
-                        ele.props[key] = JSON.parse(val.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:([^\/])/g, '"$2":$4').replace(/'([\s\S]*?)'/g, '"$1"'));
-                    }
+                        ele.props[key] = JSON.parse(val.replace(/(['"])?([a-zA-Z0-9_-]+)(['"])?:([^\/])/g, '"$2":$4').replace(/'([\s\S]*?)'/g, '"$1"').replace(/,(\s*})/g, '$1'));
+                    } else if (ele.constructor.defaultProps && ele.constructor.defaultProps.hasOwnProperty(key)) ele.props[key] = ele.constructor.defaultProps[key]; else ele.props[key] = null;
                 });
             }
         };
         WeElement.prototype.fire = function(name, data) {
-            this.dispatchEvent(new CustomEvent(name.toLowerCase(), {
+            this.dispatchEvent(new CustomEvent(name.replace(/-/g, '').toLowerCase(), {
                 detail: data
             }));
         };
@@ -1056,6 +1060,7 @@
     var html = htm.bind(h);
     var Component = WeElement;
     var defineElement = define;
+    var elements = options.mapping;
     var omi = {
         tag: tag,
         WeElement: WeElement,
@@ -1077,11 +1082,13 @@
         extractClass: extractClass,
         createRef: createRef,
         html: html,
-        htm: htm
+        htm: htm,
+        o: o,
+        elements: elements
     };
     options.root.Omi = omi;
     options.root.omi = omi;
-    options.root.Omi.version = '6.3.2';
+    options.root.Omi.version = '6.6.2';
     if ('undefined' != typeof module) module.exports = omi; else self.Omi = omi;
 }();
 //# sourceMappingURL=omi.js.map

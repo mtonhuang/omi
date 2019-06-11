@@ -9,6 +9,14 @@ try {
 }
 
 module.exports = {
+  externals:{
+    "@omim/icon":{
+      commonjs: "../icon",
+      commonjs2: "../icon",
+      amd: "../icon",
+      root: "MIcon"
+    }
+  },
   entry: './demos/' + argv[1] + '/index.js',
   output: {
     path: path.resolve(__dirname, '../demos/' + argv[1]),
@@ -21,6 +29,9 @@ module.exports = {
       use: [
         'to-string-loader',
         'css-loader',
+        {
+          loader: 'resolve-url-loader'
+        },
         {
           loader: 'sass-loader',
           options: {
@@ -35,6 +46,10 @@ module.exports = {
           }
         }
       ]
+    },
+    {
+      test: /\.(jpe?g|png|gif|svg)$/i, 
+      loader: "url-loader"
     },
     // {
     //   test: /\.scss$/,

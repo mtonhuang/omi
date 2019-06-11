@@ -34,30 +34,34 @@ export function diff(dom, vnode, context, mountAll, parent, componentRoot) {
     hydrating = dom != null && !(ATTR_KEY in dom)
   }
   if (isArray(vnode)) {
-    ret = []
-    let parentNode = null
-    if (isArray(dom)) {
-      let domLength = dom.length
-      let vnodeLength = vnode.length
-      let maxLength = domLength >= vnodeLength ? domLength : vnodeLength
-      parentNode = dom[0].parentNode
-      for (let i = 0; i < maxLength; i++) {
-        let ele = idiff(dom[i], vnode[i], context, mountAll, componentRoot)
-        ret.push(ele)
-        if (i > domLength - 1) {
-          parentNode.appendChild(ele)
-        }
+		if (parent) {
+			const styles = parent.querySelectorAll('style')
+			styles.forEach(s => {
+				parent.removeChild(s)
+			})
+      innerDiffNode(parent, vnode)
+      
+      for (let i = styles.length - 1; i >= 0; i--) {
+        parent.firstChild ? parent.insertBefore(styles[i], parent.firstChild) : parent.appendChild(style[i])
       }
-    } else {
-      vnode.forEach(function(item) {
-        let ele = idiff(dom, item, context, mountAll, componentRoot)
-        ret.push(ele)
-        parent && parent.appendChild(ele)
-      })
-    }
+		} else {
+
+			ret = []
+			vnode.forEach((item, index) => {
+				let ele = idiff(index === 0 ? dom : null, item, context, mountAll, componentRoot)
+				ret.push(ele)
+				parent && parent.appendChild(ele)
+			})
+		}
   } else {
     if (isArray(dom)) {
-      ret = idiff(dom[0], vnode, context, mountAll, componentRoot)
+			dom.forEach((one,index)=>{
+				if(index === 0){
+					ret = idiff(one, vnode, context, mountAll, componentRoot)
+				}else{
+					recollectNodeTree(one, false)
+				}
+			})
     } else {
       ret = idiff(dom, vnode, context, mountAll, componentRoot)
     }
@@ -186,7 +190,7 @@ function idiff(dom, vnode, context, mountAll, componentRoot) {
   }
 
   // Apply attributes/props from VNode to the DOM Element:
-  diffAttributes(out, vnode.attributes, props, vnode.children)
+  diffAttributes(out, vnode.attributes, props)
   if (out.props) {
     out.props.children = vnode.children
   }
@@ -344,7 +348,7 @@ export function removeChildren(node) {
  *	@param {Object} attrs		The desired end-state key-value attribute pairs
  *	@param {Object} old			Current/previous attributes (from previous VNode or element's prop cache)
  */
-function diffAttributes(dom, attrs, old, children) {
+function diffAttributes(dom, attrs, old) {
   let name
   let update = false
   let isWeElement = dom.update
@@ -396,9 +400,11 @@ function diffAttributes(dom, attrs, old, children) {
   }
 
   if (isWeElement && dom.parentNode) {
-    if (update || children.length > 0 || dom.store) {
-      dom.receiveProps(dom.props, dom.data, oldClone)
-      dom.update()
+		//__hasChildren is not accuracy when it was empty at first, so add dom.children.length > 0 condition
+    if (update || dom.__hasChildren || dom.children.length > 0 || (dom.store && !dom.store.data)) {
+      if (dom.receiveProps(dom.props, dom.data, oldClone) !== false) {
+        dom.update()
+      }
     }
   }
 }

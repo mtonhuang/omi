@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Omiu REPL</title>
-  <link rel="shortcut icon" href="https://tencent.github.io/omi/assets/md2site/favicon.ico">
+  <link rel="shortcut icon" href="../favicon.ico">
   <link rel="stylesheet" type="text/css" href="./libs/normalize.css" />
   <link rel="stylesheet" type="text/css" href="./libs/codemirror.css" />
   <style>
@@ -78,46 +78,37 @@
     </div>
     <div class="playground">
       <div class="editor">
-        <textarea id="editor">const state = {
-	DONE: 0,
-	ERROR: 1,
-	DOING: 2,
-	TODO: 3
-}
+<textarea id="editor">	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'In Progress', description: 'This is a description.', state: 2 },
+	{ name: 'Waiting', description: 'This is a description.', state: 3 }
+]" ></m-step>
+	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Error', description: 'This is a description.', state: 1 },
+	{ name: 'Waiting', description: 'This is a description.', state: 3 }
+]" ></m-step>
+	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Finished', description: 'This is a description.', state: 0 }
+]" ></m-step>
 
-define('my-app', class extends WeElement {
-
-	itemsA = [
-		{ name: 'Finished', description: 'This is a description.', state: state.DONE },
-		{ name: 'In Progress', description: 'This is a description.', state: state.DOING },
-		{ name: 'Waiting', description: 'This is a description.', state: state.TODO }
-	]
-
-	itemsB = [
-		{ name: 'Finished', description: 'This is a description.', state: state.DONE },
-		{ name: 'Error', description: 'This is a description.', state: state.ERROR },
-		{ name: 'Waiting', description: 'This is a description.', state: state.TODO }
-	]
-
-	itemsC = [
-		{ name: 'Finished', description: 'This is a description.', state: state.DONE },
-		{ name: 'Finished', description: 'This is a description.', state: state.DONE },
-		{ name: 'Finished', description: 'This is a description.', state: state.DONE }
-	]
-
-	render() {
-		return (
-			<div>
-				<o-step items={this.itemsA} />
-				<o-step items={this.itemsB} />
-				<o-step items={this.itemsC} />
-			</div>
-
-		)
-	}
-})
-
-render(<my-app />, 'body')</textarea>
+	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'In Progress', description: 'This is a description.', state: 2 },
+	{ name: 'Waiting', description: 'This is a description.', state: 3 }
+]" vertical ></m-step>
+	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Error', description: 'This is a description.', state: 1 },
+	{ name: 'Waiting', description: 'This is a description.', state: 3 }
+]" vertical ></m-step>
+	<m-step items="[
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Finished', description: 'This is a description.', state: 0 },
+	{ name: 'Finished', description: 'This is a description.', state: 0 }
+]" vertical ></m-step></textarea>
       </div>
       <div class="preview">
         <iframe class="frame" id="frame"></iframe>
@@ -130,19 +121,18 @@ render(<my-app />, 'body')</textarea>
     </div>
   </div>
 
-  <script src="./libs/babel.min.js"></script>
   <script src="./libs/codemirror.js"></script>
   <script src="./libs/xml.js"></script>
-  <script src="./libs/javascript.js"></script>
+
 
   <script>
     var style, lastTimer, lastCode, lastScript, queryString = getQueryString(),
       sourceFromQueryString = queryString.code, backgroundColor = queryString.bgColor, editorTheme = queryString.theme || "dark", notification = document.getElementById("notification"), notificationContent = document.getElementById("notification-content"), frame = document.getElementById("frame"),
       storageKey = "alloyrender_playground_source",
       myTextarea = document.getElementById("editor"),
-      editor = CodeMirror.fromTextArea(myTextarea, { lineNumbers: !0, theme: editorTheme, tabSize: 2, mode: "javascript" }), lastStorageSource = localStorage.getItem(storageKey),
+      editor = CodeMirror.fromTextArea(myTextarea, { lineNumbers: !0, theme: editorTheme, tabSize: 2, mode: "text/html" }), lastStorageSource = localStorage.getItem(storageKey),
       source = sourceFromQueryString || lastStorageSource || editor.getValue();
-    "dark" === editorTheme && (style = document.createElement("style"), style.innerHTML = ".container {background-color: #1e1d23}", document.body.appendChild(style)), source && (editor.setValue(source), compile(source, !0)), frame.src = "./preview.html";
+    "dark" === editorTheme && (style = document.createElement("style"), style.innerHTML = ".container {background-color: #1e1d23}", document.body.appendChild(style)), source && (editor.setValue(source), compile(source, !0)), frame.src = "./step-preview.html";
 
     function getQueryString() { for (var d, a = {}, b = location.search.slice(1), c = /([^&=]+)=([^&]*)/g; d = c.exec(b);)a[decodeURIComponent(d[1])] = decodeURIComponent(d[2]); return a }
     function hideNotify() { notification.classList.add("hide") }
@@ -158,6 +148,8 @@ render(<my-app />, 'body')</textarea>
     }
 
     function compile(a, b) {
+      window._sourceCode = a
+      return a
       var c, d; a = a || "", lastCode = a, hideNotify(), c = "/* @jsx createElement */\n"; try { d = Babel.transform(c + a, { presets: ["react", "es2015", "stage-1"] }).code } catch (e) { return console.error(e), showNotify(e), void 0 }
       window._sourceCode = d
       return d;
